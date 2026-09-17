@@ -4,7 +4,9 @@
   "description": "This is a full-stack Job Board Platform built for the CodeAlpha Backend Development Internship (Task 4). It features separate dashboards for Employers and Candidates, allowing for job posting, job searching, resume uploading, application tracking, and status notifications.",
   "main": "index.js",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "init-db": "cd backend && node db/setup.js",
+    "seed-db": "cd backend && node db/seed.js",
     "dev:backend": "cd backend && npm start",
     "dev:frontend": "cd frontend && npm run dev",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
