@@ -29,6 +29,9 @@ npm run install:all
 # Initialize the database (make sure backend/.env has your MySQL credentials)
 npm run init-db
 
+# (Optional) Seed the database with dummy data for testing
+npm run seed-db
+
 # Run both servers concurrently
 npm run dev
 ```
