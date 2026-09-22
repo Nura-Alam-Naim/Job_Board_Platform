@@ -58,6 +58,22 @@ class Job {
     return rows;
   }
 
+  static async findWithStatsByEmployerId(employerId) {
+    const query = `
+      SELECT j.*, 
+        COUNT(a.id) as applicants_count,
+        SUM(CASE WHEN a.status = 'hired' THEN 1 ELSE 0 END) as accepted_count,
+        DATEDIFF(NOW(), j.created_at) as days_open
+      FROM jobs j
+      LEFT JOIN applications a ON j.id = a.job_id
+      WHERE j.employer_id = ?
+      GROUP BY j.id
+      ORDER BY j.created_at DESC
+    `;
+    const [rows] = await db.execute(query, [employerId]);
+    return rows;
+  }
+
   static async update(id, employerId, { title, description, location, jobType, salaryMin, salaryMax }) {
     const [result] = await db.execute(
       `UPDATE jobs SET title=?, description=?, location=?, job_type=?, salary_min=?, salary_max=? 

@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS employers (
   email VARCHAR(150) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   company_description TEXT NULL,
+  is_verified BOOLEAN DEFAULT FALSE,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -16,6 +17,7 @@ CREATE TABLE IF NOT EXISTS candidates (
   email VARCHAR(150) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   resume_path VARCHAR(255) NULL,
+  is_verified BOOLEAN DEFAULT FALSE,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -39,7 +41,7 @@ CREATE TABLE IF NOT EXISTS applications (
   candidate_id INT NOT NULL,
   resume_path VARCHAR(255) NOT NULL,
   cover_note TEXT NULL,
-  status ENUM('applied', 'reviewed', 'shortlisted', 'rejected', 'hired') DEFAULT 'applied',
+  status ENUM('applied', 'reviewed', 'shortlisted', 'rejected', 'hired', 'interviewed') DEFAULT 'applied',
   applied_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (job_id) REFERENCES jobs(id) ON DELETE CASCADE,
   FOREIGN KEY (candidate_id) REFERENCES candidates(id) ON DELETE CASCADE,

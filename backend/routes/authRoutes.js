@@ -1,7 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const { validate } = require('../middleware/validationMiddleware');
-const { registerEmployer, registerCandidate, login } = require('../controllers/authController');
+const { registerEmployer, registerCandidate, login, verifyEmail } = require('../controllers/authController');
 
 const router = express.Router();
 
@@ -27,15 +27,12 @@ router.post(
   registerCandidate
 );
 
-router.post(
-  '/login',
-  [
-    body('email').isEmail().withMessage('Valid email is required'),
-    body('password').notEmpty().withMessage('Password is required'),
-    body('role').isIn(['employer', 'candidate']).withMessage('Role must be employer or candidate')
-  ],
-  validate,
-  login
-);
+router.post('/login', [
+  body('email').isEmail().withMessage('Valid email is required'),
+  body('password').notEmpty().withMessage('Password is required'),
+  body('role').isIn(['employer', 'candidate']).withMessage('Valid role is required')
+], validate, login);
+
+router.get('/verify-email', verifyEmail);
 
 module.exports = router;

@@ -66,10 +66,9 @@ const ApplicantsList = () => {
                     onChange={(e) => handleStatusChange(app.id, e.target.value)}
                     style={{ width: 'auto', padding: '0.25rem 0.5rem' }}
                   >
-                    <option value="applied">Applied</option>
-                    <option value="reviewed">Reviewed</option>
-                    <option value="shortlisted">Shortlisted</option>
                     <option value="rejected">Rejected</option>
+                    <option value="shortlisted">Shortlisted</option>
+                    <option value="interviewed">Interviewed</option>
                     <option value="hired">Hired</option>
                   </select>
                 </div>

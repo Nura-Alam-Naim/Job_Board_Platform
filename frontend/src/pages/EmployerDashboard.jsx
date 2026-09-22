@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axiosInstance';
-import { Plus, Edit2, Trash2, Users } from 'lucide-react';
+import { Plus, Edit2, Trash2, Users, Calendar, MapPin, Briefcase } from 'lucide-react';
 
-const EmployerJobs = () => {
+const EmployerDashboard = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('active'); // 'active' or 'history'
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingJob, setEditingJob] = useState(null);
   
@@ -45,12 +46,12 @@ const EmployerJobs = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to deactivate this job?')) {
+    if (window.confirm('Are you sure you want to close this job? It will be moved to History.')) {
       try {
         await api.delete(`/jobs/${id}`);
         fetchJobs();
       } catch (err) {
-        alert('Failed to delete job');
+        alert('Failed to close job');
       }
     }
   };
@@ -59,7 +60,7 @@ const EmployerJobs = () => {
     if (job) {
       setEditingJob(job);
       setFormData({
-        title: job.title, description: job.description, location: job.location, 
+        title: job.title, description: job.description, location: job.location || '', 
         jobType: job.job_type, salaryMin: job.salary_min || '', salaryMax: job.salary_max || ''
       });
     } else {
@@ -71,36 +72,81 @@ const EmployerJobs = () => {
 
   if (loading) return <div className="text-center mt-8">Loading...</div>;
 
+  const activeJobs = jobs.filter(j => j.is_active);
+  const historyJobs = jobs.filter(j => !j.is_active);
+  
+  const displayedJobs = activeTab === 'active' ? activeJobs : historyJobs;
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl">My Job Postings</h1>
+        <h1 className="text-2xl font-bold">Employer Dashboard</h1>
         <button onClick={() => openModal()} className="btn btn-primary"><Plus size={18} className="mr-2"/> Post New Job</button>
       </div>
 
+      <div className="flex gap-4 mb-6 border-b border-[var(--border-color)]">
+        <button 
+          className={`pb-2 px-1 ${activeTab === 'active' ? 'border-b-2 border-primary text-primary font-bold' : 'text-muted'}`}
+          onClick={() => setActiveTab('active')}
+          style={{ background: 'transparent' }}
+        >
+          Active Postings ({activeJobs.length})
+        </button>
+        <button 
+          className={`pb-2 px-1 ${activeTab === 'history' ? 'border-b-2 border-primary text-primary font-bold' : 'text-muted'}`}
+          onClick={() => setActiveTab('history')}
+          style={{ background: 'transparent' }}
+        >
+          History ({historyJobs.length})
+        </button>
+      </div>
+
       <div className="grid">
-        {jobs.map(job => (
-          <div key={job.id} className={`card flex justify-between items-center ${!job.is_active ? 'opacity-50' : ''}`}>
-            <div>
-              <h3 className="text-lg font-bold">{job.title} {!job.is_active && '(Inactive)'}</h3>
-              <p className="text-muted text-sm">{new Date(job.created_at).toLocaleDateString()} • {job.job_type}</p>
-            </div>
-            
-            {job.is_active && (
-              <div className="flex gap-2">
-                <Link to={`/employer/jobs/${job.id}/applicants`} className="btn btn-secondary text-sm">
-                  <Users size={16} /> Applicants
-                </Link>
-                <button onClick={() => openModal(job)} className="btn btn-secondary text-sm">
-                  <Edit2 size={16} /> Edit
-                </button>
-                <button onClick={() => handleDelete(job.id)} className="btn btn-danger text-sm">
-                  <Trash2 size={16} /> Delete
-                </button>
-              </div>
-            )}
+        {displayedJobs.length === 0 ? (
+          <div className="card text-center text-muted py-8">
+            <p>No jobs found in {activeTab === 'active' ? 'active postings' : 'history'}.</p>
           </div>
-        ))}
+        ) : (
+          displayedJobs.map(job => (
+            <div key={job.id} className="card flex" style={{ flexDirection: 'column', gap: '1rem' }}>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-xl font-bold mb-1">{job.title}</h3>
+                  <div className="flex gap-4 text-sm text-muted mb-2">
+                    <span className="flex items-center gap-1"><MapPin size={14} /> {job.location || 'Remote'}</span>
+                    <span className="flex items-center gap-1"><Briefcase size={14} /> {job.job_type}</span>
+                    <span className="flex items-center gap-1"><Calendar size={14} /> Posted {new Date(job.created_at).toLocaleDateString()}</span>
+                  </div>
+                </div>
+                {job.is_active && (
+                  <div className="flex gap-2">
+                    <button onClick={() => openModal(job)} className="btn btn-secondary text-sm px-3 py-1"><Edit2 size={14} /> Edit</button>
+                    <button onClick={() => handleDelete(job.id)} className="btn btn-danger text-sm px-3 py-1"><Trash2 size={14} /> Close Job</button>
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-3 gap-4" style={{ backgroundColor: 'var(--bg-default)', padding: '1rem', borderRadius: '8px' }}>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-primary">{job.applicants_count}</p>
+                  <p className="text-xs text-muted uppercase tracking-wider">Total Applicants</p>
+                </div>
+                <div className="text-center" style={{ borderLeft: '1px solid var(--border-color)', borderRight: '1px solid var(--border-color)' }}>
+                  <p className="text-2xl font-bold text-success">{job.accepted_count || 0}</p>
+                  <p className="text-xs text-muted uppercase tracking-wider">Hired</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold">{job.days_open || 0}</p>
+                  <p className="text-xs text-muted uppercase tracking-wider">Days Open</p>
+                </div>
+              </div>
+              
+              <Link to={`/employer/jobs/${job.id}/applicants`} className="btn btn-primary text-center mt-2" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                <Users size={16} /> View Applicants
+              </Link>
+            </div>
+          ))
+        )}
       </div>
 
       {isModalOpen && (
@@ -152,4 +198,4 @@ const EmployerJobs = () => {
   );
 };
 
-export default EmployerJobs;
+export default EmployerDashboard;

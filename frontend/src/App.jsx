@@ -7,8 +7,9 @@ import Home from './pages/Home';
 import JobDetails from './pages/JobDetails';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import EmployerJobs from './pages/EmployerJobs';
+import EmployerDashboard from './pages/EmployerDashboard';
 import EmployerStats from './pages/EmployerStats';
+import VerifyEmail from './pages/VerifyEmail';
 import ApplicantsList from './pages/ApplicantsList';
 import CandidateApplications from './pages/CandidateApplications';
 import CandidateProfile from './pages/CandidateProfile';
@@ -25,8 +26,9 @@ function App() {
               <Route path="/jobs/:id" element={<JobDetails />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/verify-email" element={<VerifyEmail />} />
 
-              <Route path="/employer/jobs" element={<ProtectedRoute allowedRoles={['employer']}><EmployerJobs /></ProtectedRoute>} />
+              <Route path="/employer/dashboard" element={<ProtectedRoute allowedRoles={['employer']}><EmployerDashboard /></ProtectedRoute>} />
               <Route path="/employer/jobs/:id/applicants" element={<ProtectedRoute allowedRoles={['employer']}><ApplicantsList /></ProtectedRoute>} />
               <Route path="/employer/stats" element={<ProtectedRoute allowedRoles={['employer']}><EmployerStats /></ProtectedRoute>} />
               

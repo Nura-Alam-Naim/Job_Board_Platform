@@ -1,9 +1,12 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../api/axiosInstance';
 import { Search, MapPin, Briefcase } from 'lucide-react';
+import { AuthContext } from '../context/AuthContext';
 
 const Home = () => {
+  const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ search: '', location: '', jobType: '' });
@@ -26,8 +29,12 @@ const Home = () => {
   };
 
   useEffect(() => {
-    fetchJobs();
-  }, []);
+    if (user && user.role === 'employer') {
+      navigate('/employer/dashboard');
+    } else {
+      fetchJobs();
+    }
+  }, [user, navigate]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -36,48 +43,50 @@ const Home = () => {
 
   return (
     <div>
-      <section className="text-center py-12">
-        <h1 className="text-2xl mb-4">Find Your Dream Job</h1>
-        <p className="text-muted mb-8">Discover opportunities that match your skills and aspirations.</p>
-        
-        <form onSubmit={handleSearch} className="card flex gap-4 items-center" style={{ padding: '1rem', maxWidth: '800px', margin: '0 auto' }}>
-          <div style={{ flex: 1, position: 'relative' }}>
-            <Search className="text-muted" size={18} style={{ position: 'absolute', left: '10px', top: '12px' }} />
+      <div className="text-center py-20" style={{ marginBottom: '3rem' }}>
+        <h1 className="text-5xl mb-6 text-gradient">Find Your Dream Job</h1>
+        <p className="text-xl text-muted mb-12 max-w-2xl mx-auto">
+          Discover thousands of job opportunities with all the information you need. 
+          Its your future, build it the way you want.
+        </p>
+
+        <form onSubmit={handleSearch} className="card flex gap-4 max-w-4xl mx-auto" style={{ alignItems: 'flex-end', padding: '1.5rem', background: 'var(--bg-card)' }}>
+          <div className="form-group flex-1" style={{ marginBottom: 0, textAlign: 'left' }}>
+            <label className="form-label flex items-center gap-2"><Search size={16} /> Keyword</label>
             <input 
               type="text" 
-              placeholder="Job title, keywords..." 
+              placeholder="Job title or keyword" 
               value={filters.search}
               onChange={e => setFilters({...filters, search: e.target.value})}
-              style={{ paddingLeft: '2.5rem', border: 'none', background: 'transparent', boxShadow: 'none' }}
             />
           </div>
-          <div style={{ flex: 1, position: 'relative', borderLeft: '1px solid var(--border-color)' }}>
-            <MapPin className="text-muted" size={18} style={{ position: 'absolute', left: '10px', top: '12px' }} />
+          <div className="form-group flex-1" style={{ marginBottom: 0, textAlign: 'left' }}>
+            <label className="form-label flex items-center gap-2"><MapPin size={16} /> Location</label>
             <input 
               type="text" 
-              placeholder="Location..." 
+              placeholder="City, state, or remote" 
               value={filters.location}
               onChange={e => setFilters({...filters, location: e.target.value})}
-              style={{ paddingLeft: '2.5rem', border: 'none', background: 'transparent', boxShadow: 'none' }}
             />
           </div>
-          <div style={{ flex: 1, borderLeft: '1px solid var(--border-color)', paddingLeft: '0.5rem' }}>
+          <div className="form-group flex-1" style={{ marginBottom: 0, textAlign: 'left' }}>
+            <label className="form-label flex items-center gap-2"><Briefcase size={16} /> Type</label>
             <select 
               value={filters.jobType}
               onChange={e => setFilters({...filters, jobType: e.target.value})}
-              style={{ border: 'none', background: 'transparent', boxShadow: 'none', color: 'var(--text-muted)' }}
             >
-              <option value="">Any Type</option>
+              <option value="">All Types</option>
               <option value="full-time">Full-time</option>
               <option value="part-time">Part-time</option>
               <option value="contract">Contract</option>
-              <option value="internship">Internship</option>
               <option value="remote">Remote</option>
             </select>
           </div>
-          <button type="submit" className="btn btn-primary">Search</button>
+          <button type="submit" className="btn btn-primary" style={{ padding: '0.875rem 2rem' }}>
+            Search
+          </button>
         </form>
-      </section>
+      </div>
 
       <section>
         <h2 className="text-xl mb-6">Latest Opportunities</h2>

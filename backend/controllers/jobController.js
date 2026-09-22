@@ -82,7 +82,7 @@ const deleteJob = async (req, res, next) => {
 const getEmployerJobs = async (req, res, next) => {
   try {
     const employerId = req.user.id;
-    const jobs = await Job.findByEmployerId(employerId);
+    const jobs = await Job.findWithStatsByEmployerId(employerId);
     res.json(jobs);
   } catch (error) {
     next(error);

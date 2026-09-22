@@ -16,12 +16,14 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="container navbar-content">
-        <Link to="/" className="logo">
-          <Briefcase size={28} />
+        <Link to="/" className="logo text-gradient">
+          <Briefcase size={28} style={{ color: 'var(--primary)' }} />
           <span>JobBoard</span>
         </Link>
         <div className="nav-links">
-          <Link to="/">Jobs</Link>
+          <Link to={user?.role === 'employer' ? '/employer/dashboard' : '/'}>
+            {user?.role === 'employer' ? 'Dashboard' : 'Jobs'}
+          </Link>
           
           {!user ? (
             <>
@@ -32,7 +34,6 @@ const Navbar = () => {
             <>
               {user.role === 'employer' ? (
                 <>
-                  <Link to="/employer/jobs">My Postings</Link>
                   <Link to="/employer/stats">Stats</Link>
                 </>
               ) : (

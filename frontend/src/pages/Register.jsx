@@ -9,6 +9,7 @@ const Register = () => {
   const [role, setRole] = useState('candidate');
   const [formData, setFormData] = useState({ fullName: '', companyName: '', email: '', password: '' });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,8 +20,8 @@ const Register = () => {
         : { fullName: formData.fullName, email: formData.email, password: formData.password };
         
       const res = await api.post(endpoint, payload);
-      login(res.data.token, res.data.role);
-      navigate('/');
+      setSuccess(res.data.message || 'Registration successful. Please check your email to verify your account.');
+      setError('');
     } catch (err) {
       if (err.response?.data?.errors) {
         setError(err.response.data.errors.map(e => e.msg).join(', '));
@@ -52,8 +53,10 @@ const Register = () => {
       </div>
 
       {error && <div className="badge badge-warning mb-4" style={{ display: 'block', padding: '0.75rem' }}>{error}</div>}
+      {success && <div className="badge mb-4" style={{ display: 'block', padding: '0.75rem', backgroundColor: 'var(--success-color)', color: 'white' }}>{success}</div>}
       
-      <form onSubmit={handleSubmit}>
+      {!success && (
+        <form onSubmit={handleSubmit}>
         {role === 'employer' ? (
           <div className="form-group">
             <label className="form-label">Company Name</label>
@@ -98,6 +101,8 @@ const Register = () => {
         
         <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>Register</button>
       </form>
+      )}
+      
       <p className="text-center mt-4 text-muted">
         Already have an account? <Link to="/login">Login here</Link>
       </p>
