@@ -18,12 +18,23 @@ const JobDetails = () => {
   const [success, setSuccess] = useState('');
   const [candidateProfile, setCandidateProfile] = useState(null);
   const [hasApplied, setHasApplied] = useState(false);
+  const [isExpired, setIsExpired] = useState(false);
 
   useEffect(() => {
     const fetchJob = async () => {
       try {
         const res = await api.get(`/jobs/${id}`);
         setJob(res.data);
+        if (res.data.deadline) {
+          const deadlineDate = new Date(res.data.deadline);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          if (deadlineDate < today || !res.data.is_active) {
+            setIsExpired(true);
+          }
+        } else if (!res.data.is_active) {
+          setIsExpired(true);
+        }
       } catch (err) {
         setError('Failed to load job details.');
       }
@@ -92,6 +103,7 @@ const JobDetails = () => {
               salaryMin={job.salary_min} 
               salaryMax={job.salary_max} 
               createdAt={job.created_at} 
+              deadline={job.deadline}
               iconSize={18}
             />
           </div>
@@ -131,6 +143,12 @@ const JobDetails = () => {
                 You have already applied for this position.
               </div>
               <Link to="/candidate/applications" className="btn btn-secondary" style={{ width: '100%' }}>View My Applications</Link>
+            </div>
+          ) : isExpired ? (
+            <div className="text-center">
+              <div className="badge badge-warning mb-4" style={{ display: 'block', padding: '1rem', whiteSpace: 'normal', lineHeight: '1.5' }}>
+                This job posting is no longer accepting applications.
+              </div>
             </div>
           ) : (
             <form onSubmit={handleApply}>

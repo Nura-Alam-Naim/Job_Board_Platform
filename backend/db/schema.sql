@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS jobs (
   salary_min INT NULL,
   salary_max INT NULL,
   is_active BOOLEAN DEFAULT TRUE,
+  deadline DATE NULL,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (employer_id) REFERENCES employers(id) ON DELETE CASCADE
 );

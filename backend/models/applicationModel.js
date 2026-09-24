@@ -42,6 +42,27 @@ class Application {
     return rows;
   }
 
+  static async findByEmployerId(employerId, status = null) {
+    let query = `
+       SELECT a.*, c.full_name as candidate_name, c.email as candidate_email, j.title as job_title
+       FROM applications a
+       JOIN candidates c ON a.candidate_id = c.id
+       JOIN jobs j ON a.job_id = j.id
+       WHERE j.employer_id = ?
+    `;
+    const params = [employerId];
+    
+    if (status) {
+      query += ` AND a.status = ?`;
+      params.push(status);
+    }
+    
+    query += ` ORDER BY a.applied_at DESC`;
+    
+    const [rows] = await db.execute(query, params);
+    return rows;
+  }
+
   static async updateStatus(applicationId, employerId, status) {
     // First, verify the employer owns the job this application is for
     const [appCheck] = await db.execute(

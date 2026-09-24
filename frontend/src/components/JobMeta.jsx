@@ -1,8 +1,8 @@
-import { MapPin, Briefcase, Clock, Building, Calendar } from 'lucide-react';
+import { MapPin, Briefcase, Clock, Building, Calendar, AlertCircle } from 'lucide-react';
 
-const JobMeta = ({ location, salaryMin, salaryMax, jobType, companyName, createdAt, useCalendar = false, iconSize = 16, className = '' }) => {
+const JobMeta = ({ location, salaryMin, salaryMax, jobType, companyName, createdAt, deadline, useCalendar = false, iconSize = 16, className = '' }) => {
   return (
-    <div className={`flex gap-4 text-muted ${className}`}>
+    <div className={`flex flex-wrap gap-4 text-muted ${className}`}>
       {companyName && (
         <span className="flex items-center gap-2">
           <Building size={iconSize} /> {companyName}
@@ -27,6 +27,11 @@ const JobMeta = ({ location, salaryMin, salaryMax, jobType, companyName, created
         <span className="flex items-center gap-2">
           {useCalendar ? <Calendar size={iconSize} /> : <Clock size={iconSize} />} 
           {useCalendar ? 'Posted ' : ''}{new Date(createdAt).toLocaleDateString()}
+        </span>
+      )}
+      {deadline && (
+        <span className="flex items-center gap-2 text-warning font-medium">
+          <AlertCircle size={iconSize} /> Deadline: {new Date(deadline).toLocaleDateString()}
         </span>
       )}
     </div>

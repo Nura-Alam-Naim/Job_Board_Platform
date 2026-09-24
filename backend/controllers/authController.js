@@ -18,8 +18,12 @@ const registerEmployer = async (req, res, next) => {
     const passwordHash = await bcrypt.hash(password, 10);
     const employerId = await employerModel.create(companyName, email, passwordHash);
 
+    const token = generateToken(employerId, 'employer', email);
+
     res.status(201).json({
-      message: 'Registration successful! You can now log in.'
+      message: 'Registration successful!',
+      token,
+      role: 'employer'
     });
   } catch (error) {
     next(error);
@@ -36,8 +40,12 @@ const registerCandidate = async (req, res, next) => {
     const passwordHash = await bcrypt.hash(password, 10);
     const candidateId = await candidateModel.create(fullName, email, passwordHash);
 
+    const token = generateToken(candidateId, 'candidate', email);
+
     res.status(201).json({
-      message: 'Registration successful! You can now log in.'
+      message: 'Registration successful!',
+      token,
+      role: 'candidate'
     });
   } catch (error) {
     next(error);

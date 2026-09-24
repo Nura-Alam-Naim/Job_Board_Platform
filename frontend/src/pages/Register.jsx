@@ -21,7 +21,17 @@ const Register = () => {
         : { fullName: formData.fullName, email: formData.email, password: formData.password };
         
       const res = await api.post(endpoint, payload);
-      setSuccess(res.data.message || 'Registration successful. Please check your email to verify your account.');
+      
+      // Auto-login logic
+      if (res.data.token) {
+        login(res.data.token, res.data.role);
+        // Small delay to let the context update before navigating
+        setTimeout(() => {
+          navigate(res.data.role === 'employer' ? '/employer/dashboard' : '/');
+        }, 100);
+      } else {
+        setSuccess(res.data.message || 'Registration successful.');
+      }
       setError('');
     } catch (err) {
       if (err.response?.data?.errors) {

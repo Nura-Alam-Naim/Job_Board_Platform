@@ -134,7 +134,7 @@ const Home = () => {
                   </div>
                   <p className="text-muted font-medium mb-4">{job.company_name}</p>
                   
-                  <JobMeta location={job.location || 'Not specified'} salaryMin={job.salary_min} salaryMax={job.salary_max} className="mb-4" />
+                  <JobMeta location={job.location || 'Not specified'} salaryMin={job.salary_min} salaryMax={job.salary_max} deadline={job.deadline} className="mb-4" />
                 </div>
                 
                 <Link to={`/jobs/${job.id}`} className="btn btn-secondary text-center" style={{ display: 'block' }}>

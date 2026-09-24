@@ -81,9 +81,14 @@ const updateApplicationStatus = async (req, res, next) => {
       return res.status(404).json({ message: 'Application not found or unauthorized' });
     }
 
-    // Send email notification
-    const subject = `Update on your application for ${updatedApp.job_title}`;
-    const text = `Hello,\n\nYour application status for the position of "${updatedApp.job_title}" has been updated to: ${status.toUpperCase()}.\n\nThank you,\nJob Board Team`;
+    // Send email notification based on status
+    let subject = `Update on your application for ${updatedApp.job_title}`;
+    let text = `Hello,\n\nYour application status for the position of "${updatedApp.job_title}" has been updated to: ${status.toUpperCase()}.\n\nThank you,\nJob Board Team`;
+    
+    if (status === 'hired') {
+      subject = `Congratulations! You have been HIRED for ${updatedApp.job_title}`;
+      text = `Hello!\n\nWe are absolutely thrilled to inform you that you have been HIRED for the position of "${updatedApp.job_title}"!\n\nThe employer will be in touch with you shortly regarding the next steps.\n\nCongratulations from the Job Board Team!`;
+    }
     
     await sendEmail(updatedApp.candidate_email, subject, text);
 
@@ -103,4 +108,15 @@ const getEmployerStats = async (req, res, next) => {
   }
 };
 
-module.exports = { applyForJob, getMyApplications, getJobApplications, updateApplicationStatus, getEmployerStats };
+const getEmployerAllApplications = async (req, res, next) => {
+  try {
+    const employerId = req.user.id;
+    const { status } = req.query;
+    const applications = await Application.findByEmployerId(employerId, status);
+    res.json(applications);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { applyForJob, getMyApplications, getJobApplications, updateApplicationStatus, getEmployerStats, getEmployerAllApplications };

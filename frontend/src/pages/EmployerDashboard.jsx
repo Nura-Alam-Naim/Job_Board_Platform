@@ -15,7 +15,7 @@ const EmployerDashboard = () => {
   const [editingJob, setEditingJob] = useState(null);
   
   const [formData, setFormData] = useState({
-    title: '', description: '', location: '', jobType: 'full-time', salaryMin: '', salaryMax: ''
+    title: '', description: '', location: '', jobType: 'full-time', salaryMin: '', salaryMax: '', deadline: ''
   });
 
   const fetchData = async () => {
@@ -69,11 +69,12 @@ const EmployerDashboard = () => {
       setEditingJob(job);
       setFormData({
         title: job.title, description: job.description, location: job.location || '', 
-        jobType: job.job_type, salaryMin: job.salary_min || '', salaryMax: job.salary_max || ''
+        jobType: job.job_type, salaryMin: job.salary_min || '', salaryMax: job.salary_max || '',
+        deadline: job.deadline ? new Date(job.deadline).toISOString().split('T')[0] : ''
       });
     } else {
       setEditingJob(null);
-      setFormData({ title: '', description: '', location: '', jobType: 'full-time', salaryMin: '', salaryMax: '' });
+      setFormData({ title: '', description: '', location: '', jobType: 'full-time', salaryMin: '', salaryMax: '', deadline: '' });
     }
     setIsModalOpen(true);
   };
@@ -99,8 +100,8 @@ const EmployerDashboard = () => {
 
       {/* Quick Stats Overview */}
       {stats && (
-        <div className="grid grid-cols-3 gap-6 mb-10">
-          <div className="card flex items-center gap-5 fade-in-up" style={{ animationDelay: '0.1s', borderLeft: '4px solid var(--primary)' }}>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          <Link to="/employer/dashboard" className="card flex flex-col sm:flex-row items-center gap-5 fade-in-up hover-effect" style={{ animationDelay: '0.1s', borderLeft: '4px solid var(--primary)', textDecoration: 'none', color: 'inherit' }}>
             <div style={{ padding: '1.2rem', backgroundColor: 'rgba(99, 102, 241, 0.1)', borderRadius: '16px', color: 'var(--primary)' }}>
               <Briefcase size={28} />
             </div>
@@ -108,9 +109,9 @@ const EmployerDashboard = () => {
               <p className="text-sm text-muted font-bold uppercase tracking-wider mb-1">Total Postings</p>
               <h3 className="text-3xl font-black">{stats.totalJobs}</h3>
             </div>
-          </div>
+          </Link>
           
-          <div className="card flex items-center gap-5 fade-in-up" style={{ animationDelay: '0.2s', borderLeft: '4px solid var(--success)' }}>
+          <Link to="/employer/applicants" className="card flex flex-col sm:flex-row items-center gap-5 fade-in-up hover-effect" style={{ animationDelay: '0.2s', borderLeft: '4px solid var(--success)', textDecoration: 'none', color: 'inherit' }}>
             <div style={{ padding: '1.2rem', backgroundColor: 'rgba(16, 185, 129, 0.1)', borderRadius: '16px', color: 'var(--success)' }}>
               <Users size={28} />
             </div>
@@ -118,9 +119,9 @@ const EmployerDashboard = () => {
               <p className="text-sm text-muted font-bold uppercase tracking-wider mb-1">Total Applicants</p>
               <h3 className="text-3xl font-black">{stats.totalApplications}</h3>
             </div>
-          </div>
+          </Link>
 
-          <div className="card flex items-center gap-5 fade-in-up" style={{ animationDelay: '0.3s', borderLeft: '4px solid var(--warning)' }}>
+          <Link to="/employer/applicants?status=hired" className="card flex flex-col sm:flex-row items-center gap-5 fade-in-up hover-effect" style={{ animationDelay: '0.3s', borderLeft: '4px solid var(--warning)', textDecoration: 'none', color: 'inherit' }}>
             <div style={{ padding: '1.2rem', backgroundColor: 'rgba(245, 158, 11, 0.1)', borderRadius: '16px', color: 'var(--warning)' }}>
               <CheckCircle size={28} />
             </div>
@@ -128,23 +129,23 @@ const EmployerDashboard = () => {
               <p className="text-sm text-muted font-bold uppercase tracking-wider mb-1">Total Hired</p>
               <h3 className="text-3xl font-black">{stats.applicationsByStatus?.hired || 0}</h3>
             </div>
-          </div>
+          </Link>
         </div>
       )}
 
       {/* Modern Tabs */}
       <div className="flex gap-4 mb-8" style={{ borderBottom: '2px solid var(--border-color)', paddingBottom: '1rem' }}>
         <button 
-          className={`flex items-center gap-2 px-6 py-2 rounded-full font-bold transition-all ${activeTab === 'active' ? 'bg-primary text-white shadow-md' : 'bg-[var(--bg-card)] text-muted hover:bg-[var(--border-color)]'}`}
+          className={`btn flex items-center gap-2 ${activeTab === 'active' ? 'btn-primary' : 'btn-secondary'}`}
           onClick={() => setActiveTab('active')}
-          style={activeTab === 'active' ? { background: 'var(--gradient-primary)', color: 'white' } : { backgroundColor: 'transparent' }}
+          style={{ padding: '0.5rem 1.5rem', borderRadius: '9999px' }}
         >
           <Activity size={18} /> Active Postings <span className="ml-1 opacity-80">({activeJobs.length})</span>
         </button>
         <button 
-          className={`flex items-center gap-2 px-6 py-2 rounded-full font-bold transition-all ${activeTab === 'history' ? 'bg-primary text-white shadow-md' : 'bg-[var(--bg-card)] text-muted hover:bg-[var(--border-color)]'}`}
+          className={`btn flex items-center gap-2 ${activeTab === 'history' ? 'btn-primary' : 'btn-secondary'}`}
           onClick={() => setActiveTab('history')}
-          style={activeTab === 'history' ? { background: 'var(--gradient-primary)', color: 'white' } : { backgroundColor: 'transparent' }}
+          style={{ padding: '0.5rem 1.5rem', borderRadius: '9999px' }}
         >
           <BarChart2 size={18} /> Job History <span className="ml-1 opacity-80">({historyJobs.length})</span>
         </button>
@@ -157,11 +158,11 @@ const EmployerDashboard = () => {
           </div>
         ) : (
           displayedJobs.map(job => (
-            <div key={job.id} className="card flex flex-col justify-between hover-effect fade-in-up" style={{ minHeight: '300px' }}>
-              <div>
-                <div className="flex justify-between items-start mb-4">
-                  <div style={{ flex: 1, paddingRight: '1rem' }}>
-                    <h3 className="text-xl font-bold mb-2 text-main" style={{ lineHeight: '1.3' }}>{job.title}</h3>
+            <div key={job.id} className="card flex flex-col justify-between hover-effect fade-in-up" style={{ minHeight: '300px', overflow: 'hidden' }}>
+              <div className="mb-4">
+                <div className="flex justify-between items-start mb-4 gap-2">
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <h3 className="text-xl font-bold mb-2 text-main" style={{ lineHeight: '1.3', wordWrap: 'break-word' }}>{job.title}</h3>
                     <JobMeta 
                       location={job.location}
                       jobType={job.job_type}
@@ -171,16 +172,16 @@ const EmployerDashboard = () => {
                     />
                   </div>
                   {job.is_active && (
-                    <div className="flex gap-2">
-                      <button onClick={() => openModal(job)} className="btn btn-secondary text-xs px-2 py-1 flex items-center gap-1" title="Edit"><Edit2 size={12} /> Edit</button>
-                      <button onClick={() => handleDelete(job.id)} className="btn btn-danger text-xs px-2 py-1 flex items-center gap-1" title="Close"><Trash2 size={12} /> Close</button>
+                    <div className="flex gap-2 flex-shrink-0">
+                      <button onClick={() => openModal(job)} className="btn btn-secondary text-xs px-3 py-1 flex items-center gap-1" title="Edit"><Edit2 size={12} /> Edit</button>
+                      <button onClick={() => handleDelete(job.id)} className="btn btn-danger text-xs px-3 py-1 flex items-center gap-1" title="Close"><Trash2 size={12} /> Close</button>
                     </div>
                   )}
                 </div>
               </div>
 
               <div className="mt-auto">
-                <div className="grid grid-cols-3 gap-2 mb-4" style={{ backgroundColor: 'var(--bg-color)', padding: '1rem', borderRadius: '12px' }}>
+                <div className="flex justify-between items-center gap-2 mb-4" style={{ backgroundColor: 'var(--bg-color)', padding: '1rem', borderRadius: '12px', flexWrap: 'wrap' }}>
                   <div className="text-center">
                     <div className="flex justify-center mb-1 text-primary"><Users size={20} /></div>
                     <p className="text-2xl font-black">{job.applicants_count}</p>
@@ -236,12 +237,17 @@ const EmployerDashboard = () => {
                   </select>
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Min Salary</label>
+                  <label className="form-label">Min Salary (Tk)</label>
                   <input type="number" value={formData.salaryMin} onChange={e => setFormData({...formData, salaryMin: e.target.value})} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">Max Salary</label>
+                  <label className="form-label">Max Salary (Tk)</label>
                   <input type="number" value={formData.salaryMax} onChange={e => setFormData({...formData, salaryMax: e.target.value})} />
+                </div>
+                <div className="form-group col-span-2">
+                  <label className="form-label">Application Deadline</label>
+                  <input type="date" value={formData.deadline} onChange={e => setFormData({...formData, deadline: e.target.value})} />
+                  <span className="text-xs text-muted mt-1 block">If set, the job will automatically close after this date.</span>
                 </div>
               </div>
               <div className="flex gap-2 justify-end mt-4">

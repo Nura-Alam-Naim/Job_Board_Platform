@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axiosInstance';
-import { Building, MapPin, Clock } from 'lucide-react';
+import { Building, MapPin, Clock, PartyPopper } from 'lucide-react';
 import StatusBadge from '../components/StatusBadge';
 import LoadingState from '../components/LoadingState';
 import EmptyState from '../components/EmptyState';
@@ -28,9 +28,31 @@ const CandidateApplications = () => {
 
   if (loading) return <LoadingState />;
 
+  const hiredApps = applications.filter(app => app.status === 'hired');
+
   return (
     <div>
       <h1 className="text-2xl mb-6">My Applications</h1>
+
+      {hiredApps.length > 0 && (
+        <div className="card mb-8 fade-in-up" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', border: '2px solid var(--success)', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', top: '-20px', right: '-20px', opacity: 0.1, color: 'var(--success)' }}>
+            <PartyPopper size={150} />
+          </div>
+          <div className="flex items-center gap-4 relative z-10">
+            <div style={{ backgroundColor: 'var(--success)', color: 'white', padding: '1rem', borderRadius: '50%' }}>
+              <PartyPopper size={32} />
+            </div>
+            <div>
+              <h2 className="text-2xl font-black text-success mb-1">Congratulations! You've been Hired!</h2>
+              <p className="text-main font-medium">
+                You were successfully hired for <strong>{hiredApps.length === 1 ? hiredApps[0].job_title : `${hiredApps.length} positions`}</strong>! 
+                The employer will reach out to you via email shortly.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {applications.length === 0 ? (
         <EmptyState 

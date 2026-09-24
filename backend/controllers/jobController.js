@@ -2,14 +2,14 @@ const Job = require('../models/jobModel');
 
 const createJob = async (req, res, next) => {
   try {
-    const { title, description, location, jobType, salaryMin, salaryMax } = req.body;
+    const { title, description, location, jobType, salaryMin, salaryMax, deadline } = req.body;
     const employerId = req.user.id;
 
     if (salaryMin && salaryMax && Number(salaryMin) > Number(salaryMax)) {
       return res.status(400).json({ message: 'Minimum salary cannot be greater than maximum salary' });
     }
 
-    const jobId = await Job.create(employerId, title, description, location, jobType, salaryMin, salaryMax);
+    const jobId = await Job.create(employerId, title, description, location, jobType, salaryMin, salaryMax, deadline);
     res.status(201).json({ message: 'Job created successfully', jobId });
   } catch (error) {
     next(error);
@@ -42,7 +42,7 @@ const getJobById = async (req, res, next) => {
 
 const updateJob = async (req, res, next) => {
   try {
-    const { title, description, location, jobType, salaryMin, salaryMax } = req.body;
+    const { title, description, location, jobType, salaryMin, salaryMax, deadline } = req.body;
     const employerId = req.user.id;
     const jobId = req.params.id;
 
@@ -50,7 +50,7 @@ const updateJob = async (req, res, next) => {
       return res.status(400).json({ message: 'Minimum salary cannot be greater than maximum salary' });
     }
 
-    const updated = await Job.update(jobId, employerId, { title, description, location, jobType, salaryMin, salaryMax });
+    const updated = await Job.update(jobId, employerId, { title, description, location, jobType, salaryMin, salaryMax, deadline });
     
     if (!updated) {
       return res.status(404).json({ message: 'Job not found or unauthorized' });

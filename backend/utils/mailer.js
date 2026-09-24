@@ -11,6 +11,12 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendEmail = async (to, subject, text, attachments = []) => {
+  // Prevent terminal errors by checking for placeholder credentials
+  if (!process.env.SMTP_USER || process.env.SMTP_USER.includes('replace_with')) {
+    console.log(`[Mailer Skipped]: Email to ${to} was not sent because SMTP credentials are not configured.`);
+    return;
+  }
+
   try {
     const info = await transporter.sendMail({
       from: '"Job Board Platform" <no-reply@jobboard.com>',
@@ -25,7 +31,8 @@ const sendEmail = async (to, subject, text, attachments = []) => {
        console.log(`Preview URL: ${nodemailer.getTestMessageUrl(info)}`);
     }
   } catch (error) {
-    console.error('Error sending email: ', error);
+    // Only log a clean message instead of a giant stack trace
+    console.error(`[Mailer Error]: Failed to send email to ${to}. Reason: ${error.message}`);
   }
 };
 

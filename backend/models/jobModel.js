@@ -1,17 +1,17 @@
 const db = require('../config/db');
 
 class Job {
-  static async create(employerId, title, description, location, jobType, salaryMin, salaryMax) {
+  static async create(employerId, title, description, location, jobType, salaryMin, salaryMax, deadline) {
     const [result] = await db.execute(
-      `INSERT INTO jobs (employer_id, title, description, location, job_type, salary_min, salary_max) 
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [employerId, title, description, location, jobType, salaryMin, salaryMax]
+      `INSERT INTO jobs (employer_id, title, description, location, job_type, salary_min, salary_max, deadline) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [employerId, title, description, location, jobType, salaryMin, salaryMax, deadline || null]
     );
     return result.insertId;
   }
 
   static async findAll({ search, location, jobType, limit = 10, offset = 0 }) {
-    let query = 'SELECT jobs.*, employers.company_name FROM jobs JOIN employers ON jobs.employer_id = employers.id WHERE jobs.is_active = TRUE';
+    let query = 'SELECT jobs.*, employers.company_name FROM jobs JOIN employers ON jobs.employer_id = employers.id WHERE jobs.is_active = TRUE AND (jobs.deadline IS NULL OR jobs.deadline >= CURDATE())';
     const params = [];
 
     if (search) {
@@ -34,7 +34,7 @@ class Job {
     const [rows] = await db.execute(query, params);
     
     // Get total count for pagination
-    let countQuery = 'SELECT COUNT(*) as total FROM jobs WHERE is_active = TRUE';
+    let countQuery = 'SELECT COUNT(*) as total FROM jobs WHERE is_active = TRUE AND (deadline IS NULL OR deadline >= CURDATE())';
     const countParams = [];
     if (search) { countQuery += ' AND (title LIKE ? OR description LIKE ?)'; countParams.push(`%${search}%`, `%${search}%`); }
     if (location) { countQuery += ' AND location LIKE ?'; countParams.push(`%${location}%`); }
@@ -74,11 +74,11 @@ class Job {
     return rows;
   }
 
-  static async update(id, employerId, { title, description, location, jobType, salaryMin, salaryMax }) {
+  static async update(id, employerId, { title, description, location, jobType, salaryMin, salaryMax, deadline }) {
     const [result] = await db.execute(
-      `UPDATE jobs SET title=?, description=?, location=?, job_type=?, salary_min=?, salary_max=? 
+      `UPDATE jobs SET title=?, description=?, location=?, job_type=?, salary_min=?, salary_max=?, deadline=? 
        WHERE id=? AND employer_id=?`,
-      [title, description, location, jobType, salaryMin, salaryMax, id, employerId]
+      [title, description, location, jobType, salaryMin, salaryMax, deadline || null, id, employerId]
     );
     return result.affectedRows > 0;
   }
