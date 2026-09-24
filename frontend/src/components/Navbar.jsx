@@ -35,6 +35,7 @@ const Navbar = () => {
               {user.role === 'employer' ? (
                 <>
                   <Link to="/employer/stats">Stats</Link>
+                  <Link to="/employer/profile">Profile</Link>
                 </>
               ) : (
                 <>

@@ -1,7 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const { validate } = require('../middleware/validationMiddleware');
-const { registerEmployer, registerCandidate, login, verifyEmail } = require('../controllers/authController');
+const { registerEmployer, registerCandidate, login } = require('../controllers/authController');
 
 const router = express.Router();
 
@@ -32,7 +32,5 @@ router.post('/login', [
   body('password').notEmpty().withMessage('Password is required'),
   body('role').isIn(['employer', 'candidate']).withMessage('Valid role is required')
 ], validate, login);
-
-router.get('/verify-email', verifyEmail);
 
 module.exports = router;

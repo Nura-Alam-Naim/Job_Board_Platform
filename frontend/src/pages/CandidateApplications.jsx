@@ -39,12 +39,12 @@ const CandidateApplications = () => {
           actionLink="/" 
         />
       ) : (
-        <div className="grid">
+        <div className="grid grid-cols-2">
           {applications.map(app => (
             <div key={app.id} className="card">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <Link to={`/jobs/${app.job_id}`} className="text-lg font-bold text-main block mb-1">
+              <div className="flex justify-between items-start mb-4 gap-4">
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <Link to={`/jobs/${app.job_id}`} className="text-lg font-bold text-main block mb-1" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {app.job_title}
                   </Link>
                   <p className="flex items-center gap-2 text-muted text-sm">

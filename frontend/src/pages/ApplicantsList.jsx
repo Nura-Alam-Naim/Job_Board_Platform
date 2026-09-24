@@ -56,7 +56,9 @@ const ApplicantsList = () => {
             <div key={app.id} className="card">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-lg font-bold">{app.candidate_name}</h3>
+                  <h3 className="text-lg font-bold">
+                    <Link to={`/candidates/${app.candidate_id}`} className="hover:text-primary hover:underline">{app.candidate_name}</Link>
+                  </h3>
                   <p className="text-muted text-sm">{app.candidate_email}</p>
                   <p className="text-muted text-sm mt-1">Applied: {new Date(app.applied_at).toLocaleDateString()}</p>
                 </div>
@@ -83,14 +85,24 @@ const ApplicantsList = () => {
                 </div>
               )}
               
-              <a 
-                href={`${import.meta.env.VITE_API_URL.replace('/api', '')}/${app.resume_path}`} 
-                target="_blank" 
-                rel="noreferrer"
-                className="btn btn-secondary text-sm"
-              >
-                View Resume (PDF)
-              </a>
+              <div className="flex gap-4">
+                <Link 
+                  to={`/candidates/${app.candidate_id}`}
+                  className="btn btn-primary text-sm"
+                >
+                  View Full Profile
+                </Link>
+                {app.resume_path && (
+                  <a 
+                    href={`${import.meta.env.VITE_API_URL.replace('/api', '')}/${app.resume_path}`} 
+                    target="_blank" 
+                    rel="noreferrer"
+                    className="btn btn-secondary text-sm"
+                  >
+                    View Resume (PDF)
+                  </a>
+                )}
+              </div>
             </div>
           ))}
         </div>

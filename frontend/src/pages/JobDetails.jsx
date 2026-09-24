@@ -17,6 +17,7 @@ const JobDetails = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [candidateProfile, setCandidateProfile] = useState(null);
+  const [hasApplied, setHasApplied] = useState(false);
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -31,15 +32,20 @@ const JobDetails = () => {
     fetchJob();
 
     if (user && user.role === 'candidate') {
-      const fetchProfile = async () => {
+      const fetchProfileAndApps = async () => {
         try {
-          const res = await api.get('/candidates/me');
-          setCandidateProfile(res.data);
+          const [profileRes, appsRes] = await Promise.all([
+            api.get('/candidates/me'),
+            api.get('/candidates/me/applications')
+          ]);
+          setCandidateProfile(profileRes.data);
+          const alreadyApplied = appsRes.data.some(app => app.job_id === parseInt(id));
+          setHasApplied(alreadyApplied);
         } catch (err) {
-          console.error('Failed to load profile', err);
+          console.error('Failed to load candidate data', err);
         }
       };
-      fetchProfile();
+      fetchProfileAndApps();
     }
   }, [id, user]);
 
@@ -59,6 +65,7 @@ const JobDetails = () => {
     try {
       await api.post(`/jobs/${id}/apply`, { coverNote });
       setSuccess('Successfully applied for this job!');
+      setHasApplied(true);
       setCoverNote('');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to apply. You may need to upload a resume first.');
@@ -117,6 +124,13 @@ const JobDetails = () => {
                 You need to upload your CV before you can apply for this job.
               </div>
               <Link to="/candidate/profile" className="btn btn-primary" style={{ width: '100%' }}>Upload CV Now</Link>
+            </div>
+          ) : hasApplied ? (
+            <div className="text-center">
+              <div className="badge badge-success mb-4" style={{ display: 'block', padding: '1rem', whiteSpace: 'normal', lineHeight: '1.5' }}>
+                You have already applied for this position.
+              </div>
+              <Link to="/candidate/applications" className="btn btn-secondary" style={{ width: '100%' }}>View My Applications</Link>
             </div>
           ) : (
             <form onSubmit={handleApply}>

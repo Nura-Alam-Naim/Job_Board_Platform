@@ -18,6 +18,10 @@ class Employer {
     const [rows] = await db.execute('SELECT id, company_name, email, company_description, created_at FROM employers WHERE id = ?', [id]);
     return rows[0];
   }
+
+  static async updateProfile(id, companyName, companyDescription) {
+    await db.execute('UPDATE employers SET company_name = ?, company_description = ? WHERE id = ?', [companyName, companyDescription, id]);
+  }
 }
 
 module.exports = Employer;

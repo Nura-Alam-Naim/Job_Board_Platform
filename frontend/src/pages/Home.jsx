@@ -39,7 +39,7 @@ const Home = () => {
     } else if (user && user.role === 'candidate') {
       const fetchApplications = async () => {
         try {
-          const res = await api.get('/applications/me');
+          const res = await api.get('/candidates/me/applications');
           const map = {};
           res.data.forEach(app => {
             map[app.job_id] = app.status;

@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS employers (
   email VARCHAR(150) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   company_description TEXT NULL,
-  is_verified BOOLEAN DEFAULT FALSE,
+
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -17,7 +17,13 @@ CREATE TABLE IF NOT EXISTS candidates (
   email VARCHAR(150) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
   resume_path VARCHAR(255) NULL,
-  is_verified BOOLEAN DEFAULT FALSE,
+  first_name VARCHAR(100) NULL,
+  last_name VARCHAR(100) NULL,
+  age INT NULL,
+  profession VARCHAR(150) NULL,
+  cgpa DECIMAL(4,2) NULL,
+  institute VARCHAR(255) NULL,
+
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
