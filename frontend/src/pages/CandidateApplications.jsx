@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axiosInstance';
 import { Building, MapPin, Clock } from 'lucide-react';
+import StatusBadge from '../components/StatusBadge';
+import LoadingState from '../components/LoadingState';
+import EmptyState from '../components/EmptyState';
 
 const CandidateApplications = () => {
   const [applications, setApplications] = useState([]);
@@ -20,31 +23,21 @@ const CandidateApplications = () => {
     fetchApplications();
   }, []);
 
-  const getStatusBadgeClass = (status) => {
-    switch (status) {
-      case 'shortlisted':
-      case 'hired':
-        return 'badge-success';
-      case 'rejected':
-        return 'badge-outline';
-      case 'reviewed':
-        return 'badge-primary';
-      default:
-        return 'badge-warning';
-    }
-  };
 
-  if (loading) return <div className="text-center mt-8">Loading...</div>;
+
+
+  if (loading) return <LoadingState />;
 
   return (
     <div>
       <h1 className="text-2xl mb-6">My Applications</h1>
 
       {applications.length === 0 ? (
-        <div className="card text-center text-muted p-6">
-          <p className="mb-4">You haven't applied to any jobs yet.</p>
-          <Link to="/" className="btn btn-primary">Browse Jobs</Link>
-        </div>
+        <EmptyState 
+          message="You haven't applied to any jobs yet." 
+          actionText="Browse Jobs" 
+          actionLink="/" 
+        />
       ) : (
         <div className="grid">
           {applications.map(app => (
@@ -58,9 +51,7 @@ const CandidateApplications = () => {
                     <Building size={16} /> {app.company_name}
                   </p>
                 </div>
-                <span className={`badge ${getStatusBadgeClass(app.status)} uppercase`}>
-                  {app.status}
-                </span>
+                <StatusBadge status={app.status} />
               </div>
               
               <div className="flex items-center gap-2 text-muted text-sm border-top pt-4 mt-2" style={{ borderTop: '1px solid var(--border-color)' }}>

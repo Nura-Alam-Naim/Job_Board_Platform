@@ -47,7 +47,7 @@ describe('Home Component (Job Search)', () => {
     });
 
     expect(screen.getByText('Tech Inc')).toBeInTheDocument();
-    expect(screen.getByText(/80000 - \$120000/i)).toBeInTheDocument();
+    expect(screen.getByText(/80000 - Tk 120000/i)).toBeInTheDocument();
     
     // Check API was called
     expect(api.get).toHaveBeenCalledWith('/jobs?');

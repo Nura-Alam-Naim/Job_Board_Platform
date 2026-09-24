@@ -1,7 +1,9 @@
 const Application = require('../models/applicationModel');
 const Job = require('../models/jobModel');
 const Candidate = require('../models/candidateModel');
+const Employer = require('../models/employerModel');
 const { sendEmail } = require('../utils/mailer');
+const path = require('path');
 
 const applyForJob = async (req, res, next) => {
   try {
@@ -20,6 +22,22 @@ const applyForJob = async (req, res, next) => {
     }
 
     await Application.create(jobId, candidateId, candidate.resume_path, coverNote);
+
+    // Fetch employer and send email with CV
+    const employer = await Employer.findById(job.employer_id);
+    if (employer) {
+      const subject = `New Application for ${job.title}`;
+      const text = `Hello ${employer.company_name},\n\nA candidate named ${candidate.full_name} has applied for your job posting: "${job.title}".\n\nPlease find their CV attached.\n\nCover Note:\n${coverNote || 'N/A'}\n\nThank you,\nJob Board Platform`;
+      
+      const attachments = [
+        {
+          filename: 'candidate_resume.pdf',
+          path: path.join(__dirname, '..', candidate.resume_path)
+        }
+      ];
+      await sendEmail(employer.email, subject, text, attachments);
+    }
+
     res.status(201).json({ message: 'Applied successfully' });
   } catch (error) {
     if (error.message === 'Already applied to this job') {

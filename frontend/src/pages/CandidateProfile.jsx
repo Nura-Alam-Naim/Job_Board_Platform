@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axiosInstance';
 import { UploadCloud, FileText } from 'lucide-react';
-
+import LoadingState from '../components/LoadingState';
+import EmptyState from '../components/EmptyState';
 const CandidateProfile = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -54,8 +55,8 @@ const CandidateProfile = () => {
     setUploading(false);
   };
 
-  if (loading) return <div className="text-center mt-8">Loading...</div>;
-  if (!profile) return <div className="text-center mt-8">Failed to load profile.</div>;
+  if (loading) return <LoadingState />;
+  if (!profile) return <EmptyState message="Failed to load profile." />;
 
   return (
     <div className="card" style={{ maxWidth: '600px', margin: '0 auto' }}>

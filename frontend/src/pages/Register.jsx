@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import api from '../api/axiosInstance';
+import FormInput from '../components/FormInput';
 
 const Register = () => {
   const { login } = useContext(AuthContext);
@@ -58,46 +59,38 @@ const Register = () => {
       {!success && (
         <form onSubmit={handleSubmit}>
         {role === 'employer' ? (
-          <div className="form-group">
-            <label className="form-label">Company Name</label>
-            <input 
-              type="text" 
-              required 
-              value={formData.companyName} 
-              onChange={e => setFormData({...formData, companyName: e.target.value})} 
-            />
-          </div>
+          <FormInput 
+            label="Company Name"
+            type="text" 
+            required 
+            value={formData.companyName} 
+            onChange={e => setFormData({...formData, companyName: e.target.value})} 
+          />
         ) : (
-          <div className="form-group">
-            <label className="form-label">Full Name</label>
-            <input 
-              type="text" 
-              required 
-              value={formData.fullName} 
-              onChange={e => setFormData({...formData, fullName: e.target.value})} 
-            />
-          </div>
+          <FormInput 
+            label="Full Name"
+            type="text" 
+            required 
+            value={formData.fullName} 
+            onChange={e => setFormData({...formData, fullName: e.target.value})} 
+          />
         )}
 
-        <div className="form-group">
-          <label className="form-label">Email</label>
-          <input 
-            type="email" 
-            required 
-            value={formData.email} 
-            onChange={e => setFormData({...formData, email: e.target.value})} 
-          />
-        </div>
-        <div className="form-group">
-          <label className="form-label">Password</label>
-          <input 
-            type="password" 
-            required 
-            minLength={6}
-            value={formData.password} 
-            onChange={e => setFormData({...formData, password: e.target.value})} 
-          />
-        </div>
+        <FormInput 
+          label="Email"
+          type="email" 
+          required 
+          value={formData.email} 
+          onChange={e => setFormData({...formData, email: e.target.value})} 
+        />
+        <FormInput 
+          label="Password"
+          type="password" 
+          required 
+          minLength={6}
+          value={formData.password} 
+          onChange={e => setFormData({...formData, password: e.target.value})} 
+        />
         
         <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>Register</button>
       </form>

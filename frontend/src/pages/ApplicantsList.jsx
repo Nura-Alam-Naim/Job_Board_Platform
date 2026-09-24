@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../api/axiosInstance';
+import LoadingState from '../components/LoadingState';
+import EmptyState from '../components/EmptyState';
 
 const ApplicantsList = () => {
   const { id } = useParams();
@@ -36,8 +38,8 @@ const ApplicantsList = () => {
     }
   };
 
-  if (loading) return <div className="text-center mt-8">Loading...</div>;
-  if (!job) return <div className="text-center mt-8">Job not found.</div>;
+  if (loading) return <LoadingState />;
+  if (!job) return <EmptyState message="Job not found." />;
 
   return (
     <div>
@@ -47,7 +49,7 @@ const ApplicantsList = () => {
       </div>
 
       {applications.length === 0 ? (
-        <div className="card text-center text-muted">No applications yet.</div>
+        <EmptyState message="No applications yet." />
       ) : (
         <div className="grid">
           {applications.map(app => (

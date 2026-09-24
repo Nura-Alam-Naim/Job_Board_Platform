@@ -10,13 +10,14 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendEmail = async (to, subject, text) => {
+const sendEmail = async (to, subject, text, attachments = []) => {
   try {
     const info = await transporter.sendMail({
       from: '"Job Board Platform" <no-reply@jobboard.com>',
       to,
       subject,
       text,
+      attachments,
     });
     console.log(`Message sent: ${info.messageId}`);
     // Ethereal specific, will not work for real SMTP providers

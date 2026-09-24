@@ -2,6 +2,7 @@ import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import api from '../api/axiosInstance';
+import FormInput from '../components/FormInput';
 
 const Login = () => {
   const { login } = useContext(AuthContext);
@@ -26,24 +27,20 @@ const Login = () => {
       {error && <div className="badge badge-warning mb-4" style={{ display: 'block', padding: '0.75rem' }}>{error}</div>}
       
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label className="form-label">Email</label>
-          <input 
-            type="email" 
-            required 
-            value={formData.email} 
-            onChange={e => setFormData({...formData, email: e.target.value})} 
-          />
-        </div>
-        <div className="form-group">
-          <label className="form-label">Password</label>
-          <input 
-            type="password" 
-            required 
-            value={formData.password} 
-            onChange={e => setFormData({...formData, password: e.target.value})} 
-          />
-        </div>
+        <FormInput 
+          label="Email"
+          type="email" 
+          required 
+          value={formData.email} 
+          onChange={e => setFormData({...formData, email: e.target.value})} 
+        />
+        <FormInput 
+          label="Password"
+          type="password" 
+          required 
+          value={formData.password} 
+          onChange={e => setFormData({...formData, password: e.target.value})} 
+        />
         <div className="form-group">
           <label className="form-label">I am a...</label>
           <select value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>

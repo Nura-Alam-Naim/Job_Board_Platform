@@ -3,6 +3,8 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../api/axiosInstance';
 import { AuthContext } from '../context/AuthContext';
 import { MapPin, Briefcase, Clock, Building } from 'lucide-react';
+import JobMeta from '../components/JobMeta';
+import LoadingState from '../components/LoadingState';
 
 const JobDetails = () => {
   const { id } = useParams();
@@ -14,6 +16,7 @@ const JobDetails = () => {
   const [coverNote, setCoverNote] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [candidateProfile, setCandidateProfile] = useState(null);
 
   useEffect(() => {
     const fetchJob = async () => {
@@ -26,7 +29,19 @@ const JobDetails = () => {
       setLoading(false);
     };
     fetchJob();
-  }, [id]);
+
+    if (user && user.role === 'candidate') {
+      const fetchProfile = async () => {
+        try {
+          const res = await api.get('/candidates/me');
+          setCandidateProfile(res.data);
+        } catch (err) {
+          console.error('Failed to load profile', err);
+        }
+      };
+      fetchProfile();
+    }
+  }, [id, user]);
 
   const handleApply = async (e) => {
     e.preventDefault();
@@ -51,23 +66,27 @@ const JobDetails = () => {
     setApplying(false);
   };
 
-  if (loading) return <div className="text-center mt-8">Loading...</div>;
+  if (loading) return <LoadingState />;
   if (!job) return <div className="text-center mt-8 text-danger">{error}</div>;
 
   return (
     <div className="grid grid-cols-3 gap-6">
-      <div className="col-span-2" style={{ gridColumn: 'span 2' }}>
+      <div className="col-span-2 fade-in-up" style={{ gridColumn: 'span 2' }}>
         <div className="card mb-6">
           <div className="flex justify-between items-center mb-4">
             <h1 className="text-2xl">{job.title}</h1>
             <span className="badge badge-primary">{job.job_type}</span>
           </div>
           
-          <div className="flex gap-4 mb-6 text-muted border-bottom pb-4" style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem' }}>
-            <span className="flex items-center gap-2"><Building size={18} /> {job.company_name}</span>
-            <span className="flex items-center gap-2"><MapPin size={18} /> {job.location || 'Remote'}</span>
-            <span className="flex items-center gap-2"><Briefcase size={18} /> ${job.salary_min} - ${job.salary_max}</span>
-            <span className="flex items-center gap-2"><Clock size={18} /> {new Date(job.created_at).toLocaleDateString()}</span>
+          <div className="border-bottom pb-4 mb-6" style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '1rem' }}>
+            <JobMeta 
+              companyName={job.company_name} 
+              location={job.location} 
+              salaryMin={job.salary_min} 
+              salaryMax={job.salary_max} 
+              createdAt={job.created_at} 
+              iconSize={18}
+            />
           </div>
           
           <div>
@@ -91,6 +110,13 @@ const JobDetails = () => {
           ) : user.role === 'employer' ? (
             <div className="badge badge-warning" style={{ display: 'block', textAlign: 'center' }}>
               Employers cannot apply for jobs.
+            </div>
+          ) : (candidateProfile && !candidateProfile.resume_path) ? (
+            <div className="text-center">
+              <div className="badge badge-warning mb-4" style={{ display: 'block', padding: '1rem', whiteSpace: 'normal', lineHeight: '1.5' }}>
+                You need to upload your CV before you can apply for this job.
+              </div>
+              <Link to="/candidate/profile" className="btn btn-primary" style={{ width: '100%' }}>Upload CV Now</Link>
             </div>
           ) : (
             <form onSubmit={handleApply}>

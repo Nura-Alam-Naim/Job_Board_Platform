@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import api from '../api/axiosInstance';
 import { Briefcase, Users, CheckCircle, XCircle } from 'lucide-react';
+import LoadingState from '../components/LoadingState';
+import EmptyState from '../components/EmptyState';
 
 const EmployerStats = () => {
   const [stats, setStats] = useState(null);
@@ -19,8 +21,8 @@ const EmployerStats = () => {
     fetchStats();
   }, []);
 
-  if (loading) return <div className="text-center mt-8">Loading...</div>;
-  if (!stats) return <div className="text-center mt-8">Failed to load statistics.</div>;
+  if (loading) return <LoadingState />;
+  if (!stats) return <EmptyState message="Failed to load statistics." />;
 
   return (
     <div>

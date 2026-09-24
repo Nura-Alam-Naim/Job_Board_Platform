@@ -3,6 +3,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import api from '../api/axiosInstance';
 import { Search, MapPin, Briefcase } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
+import JobMeta from '../components/JobMeta';
+import StatusBadge from '../components/StatusBadge';
+import LoadingState from '../components/LoadingState';
+import EmptyState from '../components/EmptyState';
 
 const Home = () => {
   const { user } = useContext(AuthContext);
@@ -10,6 +14,7 @@ const Home = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({ search: '', location: '', jobType: '' });
+  const [appliedJobs, setAppliedJobs] = useState({});
 
   const fetchJobs = async () => {
     setLoading(true);
@@ -31,10 +36,31 @@ const Home = () => {
   useEffect(() => {
     if (user && user.role === 'employer') {
       navigate('/employer/dashboard');
-    } else {
-      fetchJobs();
+    } else if (user && user.role === 'candidate') {
+      const fetchApplications = async () => {
+        try {
+          const res = await api.get('/applications/me');
+          const map = {};
+          res.data.forEach(app => {
+            map[app.job_id] = app.status;
+          });
+          setAppliedJobs(map);
+        } catch (err) {
+          console.error('Failed to fetch applications', err);
+        }
+      };
+      fetchApplications();
     }
   }, [user, navigate]);
+
+  useEffect(() => {
+    if (!user || user.role !== 'employer') {
+      const delayDebounceFn = setTimeout(() => {
+        fetchJobs();
+      }, 300);
+      return () => clearTimeout(delayDebounceFn);
+    }
+  }, [filters.search, filters.location, filters.jobType, user]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -91,24 +117,24 @@ const Home = () => {
       <section>
         <h2 className="text-xl mb-6">Latest Opportunities</h2>
         {loading ? (
-          <p className="text-center text-muted">Loading jobs...</p>
+          <LoadingState message="Loading jobs..." />
         ) : jobs.length === 0 ? (
-          <p className="text-center text-muted card">No jobs found matching your criteria.</p>
+          <EmptyState message="No jobs found matching your criteria." />
         ) : (
           <div className="grid grid-cols-2">
-            {jobs.map(job => (
-              <div key={job.id} className="card flex" style={{ flexDirection: 'column', justifyContent: 'space-between' }}>
+            {jobs.map((job, index) => (
+              <div key={job.id} className="card flex fade-in-up" style={{ flexDirection: 'column', justifyContent: 'space-between', animationDelay: `${index * 0.1}s` }}>
                 <div>
                   <div className="flex justify-between items-center mb-2">
                     <h3 className="text-lg font-bold">{job.title}</h3>
-                    <span className="badge badge-primary">{job.job_type}</span>
+                    <div className="flex gap-2 items-center">
+                      <StatusBadge status={appliedJobs[job.id]} />
+                      <span className="badge badge-primary">{job.job_type}</span>
+                    </div>
                   </div>
                   <p className="text-muted font-medium mb-4">{job.company_name}</p>
                   
-                  <div className="flex gap-4 mb-4 text-sm text-muted">
-                    <span className="flex items-center gap-2"><MapPin size={16} /> {job.location || 'Not specified'}</span>
-                    <span className="flex items-center gap-2"><Briefcase size={16} /> ${job.salary_min} - ${job.salary_max}</span>
-                  </div>
+                  <JobMeta location={job.location || 'Not specified'} salaryMin={job.salary_min} salaryMax={job.salary_max} className="mb-4" />
                 </div>
                 
                 <Link to={`/jobs/${job.id}`} className="btn btn-secondary text-center" style={{ display: 'block' }}>

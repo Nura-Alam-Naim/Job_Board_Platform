@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axiosInstance';
 import { Plus, Edit2, Trash2, Users, Calendar, MapPin, Briefcase } from 'lucide-react';
+import JobMeta from '../components/JobMeta';
+import LoadingState from '../components/LoadingState';
+import EmptyState from '../components/EmptyState';
 
 const EmployerDashboard = () => {
   const [jobs, setJobs] = useState([]);
@@ -70,7 +73,7 @@ const EmployerDashboard = () => {
     setIsModalOpen(true);
   };
 
-  if (loading) return <div className="text-center mt-8">Loading...</div>;
+  if (loading) return <LoadingState />;
 
   const activeJobs = jobs.filter(j => j.is_active);
   const historyJobs = jobs.filter(j => !j.is_active);
@@ -103,20 +106,21 @@ const EmployerDashboard = () => {
 
       <div className="grid">
         {displayedJobs.length === 0 ? (
-          <div className="card text-center text-muted py-8">
-            <p>No jobs found in {activeTab === 'active' ? 'active postings' : 'history'}.</p>
-          </div>
+          <EmptyState message={`No jobs found in ${activeTab === 'active' ? 'active postings' : 'history'}.`} />
         ) : (
           displayedJobs.map(job => (
             <div key={job.id} className="card flex" style={{ flexDirection: 'column', gap: '1rem' }}>
               <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-xl font-bold mb-1">{job.title}</h3>
-                  <div className="flex gap-4 text-sm text-muted mb-2">
-                    <span className="flex items-center gap-1"><MapPin size={14} /> {job.location || 'Remote'}</span>
-                    <span className="flex items-center gap-1"><Briefcase size={14} /> {job.job_type}</span>
-                    <span className="flex items-center gap-1"><Calendar size={14} /> Posted {new Date(job.created_at).toLocaleDateString()}</span>
-                  </div>
+                  <JobMeta 
+                    location={job.location}
+                    jobType={job.job_type}
+                    createdAt={job.created_at}
+                    useCalendar={true}
+                    iconSize={14}
+                    className="mb-2"
+                  />
                 </div>
                 {job.is_active && (
                   <div className="flex gap-2">
