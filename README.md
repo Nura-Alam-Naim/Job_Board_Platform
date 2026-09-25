@@ -1,23 +1,6 @@
-# 💼 CodeAlpha Job Board Platform
+# 💼 Job Board Platform
 
-> A full-stack Job Board web application built as **Task 4** of the **CodeAlpha Backend Development Internship**. The platform connects employers and candidates through a streamlined hiring workflow — employers can post jobs and manage applications, while candidates can search listings, upload resumes, and track their application status in real time.
-
----
-
-## 📋 Table of Contents
-
-- [Overview](#overview)
-- [Tech Stack](#tech-stack)
-- [Architecture](#architecture)
-- [Database Schema](#database-schema)
-- [API Endpoints](#api-endpoints)
-- [Authentication](#authentication)
-- [Getting Started](#getting-started)
-- [Environment Variables](#environment-variables)
-- [Scripts](#scripts)
-- [Testing](#testing)
-- [Project Structure](#project-structure)
-- [License](#license)
+> A full-stack Job Board web application. The platform connects employers and candidates through a streamlined hiring workflow — employers can post jobs and manage applications, while candidates can search listings, upload resumes, and track their application status in real time.
 
 ---
 
@@ -212,8 +195,8 @@ Role-based access is enforced via the `authorize()` middleware — endpoints are
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/Nura-Alam-Naim/CodeAlpha_Job_Board_Platform.git
-cd CodeAlpha_Job_Board_Platform
+git clone https://github.com/Nura-Alam-Naim/Job_Board_Platform.git
+cd Job_Board_Platform
 
 # 2. Install all dependencies (root, backend, frontend)
 npm run install:all
@@ -297,7 +280,7 @@ A separate test database (`job_board_test_db`) is used automatically when `NODE_
 ## Project Structure
 
 ```
-CodeAlpha_Job_Board_Platform/
+Job_Board_Platform/
 ├── backend/
 │   ├── config/
 │   │   └── db.js                 # MySQL connection pool
@@ -358,5 +341,5 @@ This project is licensed under the **ISC License**.
 ---
 
 <p align="center">
-  Built with ❤️ by <strong>Nura Alam Naim</strong> as part of the <strong>CodeAlpha Backend Development Internship</strong>
+  Built with ❤️ by <strong>Nura Alam Naim</strong>
 </p>

@@ -1,7 +1,7 @@
 {
-  "name": "codealpha_job_board_platform",
+  "name": "job_board_platform",
   "version": "1.0.0",
-  "description": "This is a full-stack Job Board Platform built for the CodeAlpha Backend Development Internship (Task 4). It features separate dashboards for Employers and Candidates, allowing for job posting, job searching, resume uploading, application tracking, and status notifications.",
+  "description": "This is a full-stack Job Board Platform. It features separate dashboards for Employers and Candidates, allowing for job posting, job searching, resume uploading, application tracking, and status notifications.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,15 +14,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Nura-Alam-Naim/CodeAlpha_Job_Board_Platform.git"
+    "url": "git+https://github.com/Nura-Alam-Naim/Job_Board_Platform.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Nura-Alam-Naim/CodeAlpha_Job_Board_Platform/issues"
+    "url": "https://github.com/Nura-Alam-Naim/Job_Board_Platform/issues"
   },
-  "homepage": "https://github.com/Nura-Alam-Naim/CodeAlpha_Job_Board_Platform#readme",
+  "homepage": "https://github.com/Nura-Alam-Naim/Job_Board_Platform#readme",
   "dependencies": {
     "concurrently": "^10.0.5"
   }

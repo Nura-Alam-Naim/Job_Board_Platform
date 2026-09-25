@@ -151,7 +151,7 @@ const EmployerDashboard = () => {
         </button>
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
         {displayedJobs.length === 0 ? (
           <div className="col-span-2">
             <EmptyState message={`No jobs found in ${activeTab === 'active' ? 'active postings' : 'history'}.`} />
