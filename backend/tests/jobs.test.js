@@ -106,6 +106,14 @@ describe('Job Endpoints', () => {
     });
   });
 
+  describe('GET /api/jobs/:id', () => {
+    it('should get job by id', async () => {
+      const res = await request(app).get(`/api/jobs/${createdJobId}`);
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.title).toEqual('Software Engineer');
+    });
+  });
+
   describe('PUT /api/jobs/:id', () => {
     it('should allow employer to update their job', async () => {
       const res = await request(app)

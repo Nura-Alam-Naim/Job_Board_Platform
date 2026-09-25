@@ -20,7 +20,8 @@ describe('Auth Endpoints', () => {
         });
       
       expect(res.statusCode).toEqual(201);
-      expect(res.body.message).toContain('Please check your email');
+      expect(res.body.message).toContain('Registration successful');
+      expect(res.body).toHaveProperty('token');
     });
 
     it('should reject invalid email', async () => {
@@ -61,16 +62,12 @@ describe('Auth Endpoints', () => {
         });
       
       expect(res.statusCode).toEqual(201);
-      expect(res.body.message).toContain('Please check your email');
+      expect(res.body.message).toContain('Registration successful');
+      expect(res.body).toHaveProperty('token');
     });
   });
 
   describe('POST /api/auth/login', () => {
-    beforeAll(async () => {
-      // Manually verify the users so login tests can proceed
-      await db.execute('UPDATE employers SET is_verified = TRUE');
-      await db.execute('UPDATE candidates SET is_verified = TRUE');
-    });
     it('should login an employer with correct credentials', async () => {
       const res = await request(app)
         .post('/api/auth/login')
